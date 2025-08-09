@@ -1,20 +1,17 @@
 ﻿using System;
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace RealEstateBank.Migrations
-{
+namespace RealEstateBank.Migrations {
     /// <inheritdoc />
-    public partial class Init : Migration
-    {
+    public partial class Init : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.CreateTable(
                 name: "Users",
-                columns: table => new
-                {
+                columns: table => new {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     FullName = table.Column<string>(type: "text", nullable: true),
                     Email = table.Column<string>(type: "text", nullable: true),
@@ -26,8 +23,7 @@ namespace RealEstateBank.Migrations
                     CreationDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     ModifiedDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
-                constraints: table =>
-                {
+                constraints: table => {
                     table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
@@ -38,8 +34,7 @@ namespace RealEstateBank.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropTable(
                 name: "Users");
         }

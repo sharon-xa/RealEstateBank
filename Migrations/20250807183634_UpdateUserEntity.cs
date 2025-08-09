@@ -1,16 +1,14 @@
 ﻿using System;
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace RealEstateBank.Migrations
-{
+namespace RealEstateBank.Migrations {
     /// <inheritdoc />
-    public partial class UpdateUserEntity : Migration
-    {
+    public partial class UpdateUserEntity : Migration {
         /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
+        protected override void Up(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropColumn(
                 name: "Password",
                 table: "Users");
@@ -77,8 +75,7 @@ namespace RealEstateBank.Migrations
         }
 
         /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
+        protected override void Down(MigrationBuilder migrationBuilder) {
             migrationBuilder.DropColumn(
                 name: "Birthday",
                 table: "Users");

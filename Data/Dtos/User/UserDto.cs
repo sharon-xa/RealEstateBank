@@ -2,8 +2,7 @@ using RealEstateBank.Data.Enums;
 
 namespace RealEstateBank.Data.Dtos.User;
 
-public class UserDto
-{
+public class UserDto {
     public Guid Id { get; set; }
     public string FullName { get; set; } = null!;
     public string Email { get; set; } = null!;

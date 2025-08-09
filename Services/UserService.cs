@@ -1,4 +1,5 @@
 using AutoMapper;
+
 using RealEstateBank.Data;
 using RealEstateBank.Data.Dtos.User;
 using RealEstateBank.Data.Enums;
@@ -8,52 +9,48 @@ using RealEstateBank.Utils;
 
 namespace RealEstateBank.Services;
 
-public interface IUserService
-{
-    Task<UserDto> Login(LoginForm loginForm);
+public interface IUserService {
+    Task<UserDto?> Login(LoginForm loginForm);
     Task<UserDto> DeleteUser(Guid id, Guid userId);
-    Task<UserDto> Register(RegisterForm registerForm);
+    Task<UserDto?> Register(RegisterForm registerForm);
     Task<UserDto> UpdateUser(UpdateUserForm updateUserForm, Guid userId);
     Task<UserDto> ChangeMyPassword(ChangePasswordForm form, Guid id);
     Task<PaginatedResult<UserDto>> GetAll(UserFilter filter);
     Task<UserDto> GetUserById(Guid id);
     Task<string> GetAccessToken(Guid? userId, DateTime? ExpiryDate);
+    Task<bool?> UpdateUserRole(Guid userId, UserRole role);
 }
 
-public class UserService : IUserService
-{
-    private readonly IRepositoryWrapper _repositoryWrapper;
-    private readonly IMapper _mapper;
-    private readonly ITokenService _tokenService;
+public class UserService : IUserService {
     private readonly DataContext _context;
+    private readonly IMapper _mapper;
+    private readonly IRepositoryWrapper _repositoryWrapper;
+    private readonly ITokenService _tokenService;
 
     public UserService(
         IRepositoryWrapper repositoryWrapper,
         IMapper mapper,
         ITokenService tokenService,
         DataContext context
-    )
-    {
+    ) {
         _repositoryWrapper = repositoryWrapper;
         _mapper = mapper;
         _tokenService = tokenService;
         _context = context;
     }
 
-    public async Task<UserDto> Login(LoginForm loginForm)
-    {
+    public async Task<UserDto?> Login(LoginForm loginForm) {
         if (string.IsNullOrWhiteSpace(loginForm.Email))
-            throw new Exception("Please provide an email");
+            return null;
 
-        var user = await _repositoryWrapper.Users.Get(
-            u => u.Email != null && u.Email.ToLower() == loginForm.Email.ToLower()
+        var user = await _repositoryWrapper.Users.Get(u => u.Email.ToLower() == loginForm.Email.ToLower()
         );
 
-        if (user == null || user.Deleted == true)
-            throw new Exception("User not found");
+        if (user == null || user.Deleted)
+            return null;
 
         if (!BCrypt.Net.BCrypt.Verify(loginForm.Password, user.PasswordHash))
-            throw new Exception("Wrong password");
+            return null;
 
         var userDto = _mapper.Map<UserDto>(user);
         userDto.Token = _tokenService.CreateToken(userDto);
@@ -62,62 +59,68 @@ public class UserService : IUserService
         return userDto;
     }
 
-    public async Task<UserDto> Register(RegisterForm registerForm)
-    {
+    public async Task<UserDto?> Register(RegisterForm registerForm) {
         var user = await _repositoryWrapper.Users.Get(u =>
             u.Email == registerForm.Email
         );
-        if (user != null)
-            throw new Exception("User already exists");
+        if (user != null) return null;
 
-        var newUser = new AppUser
-        {
+        var newUser = new AppUser {
             Email = registerForm.Email!,
             FullName = registerForm.FullName!,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerForm.Password),
             PhoneNumber = registerForm.PhoneNumber!,
             Role = UserRole.User,
             Gender = registerForm.Gender!.Value,
-            Birthday = registerForm.Birthday!.Value,
+            Birthday = registerForm.Birthday!.Value
         };
 
-        await _repositoryWrapper.Users.CreateUser(newUser);
+        var result = await _repositoryWrapper.Users.CreateUser(newUser);
 
-        var userDto = _mapper.Map<UserDto>(newUser);
+        if (!result.IsSuccess) return null;
+
+        var userDto = _mapper.Map<UserDto>(result.Value);
         userDto.Token = _tokenService.CreateToken(userDto);
         userDto.RefreshToken = _tokenService.CreateRefreshToken(userDto);
 
         return userDto;
     }
 
-    public Task<UserDto> ChangeMyPassword(ChangePasswordForm form, Guid id)
-    {
+    public Task<UserDto> UpdateUser(UpdateUserForm updateUserForm, Guid userId) {
         throw new NotImplementedException();
     }
 
-    public Task<UserDto> DeleteUser(Guid id, Guid userId)
-    {
+    public Task<UserDto> ChangeMyPassword(ChangePasswordForm form, Guid id) {
         throw new NotImplementedException();
     }
 
-    public Task<string> GetAccessToken(Guid? userId, DateTime? ExpiryDate)
-    {
+    public Task<UserDto> DeleteUser(Guid id, Guid userId) {
         throw new NotImplementedException();
     }
 
-    public Task<PaginatedResult<UserDto>> GetAll(UserFilter filter)
-    {
+    public Task<string> GetAccessToken(Guid? userId, DateTime? ExpiryDate) {
         throw new NotImplementedException();
     }
 
-    public Task<UserDto> GetUserById(Guid id)
-    {
+    public Task<PaginatedResult<UserDto>> GetAll(UserFilter filter) {
         throw new NotImplementedException();
     }
 
+    public async Task<UserDto> GetUserById(Guid id) {
+        var userModel = await _repositoryWrapper.Users.GetById(id);
+        return _mapper.Map<UserDto>(userModel);
+    }
 
-    public Task<UserDto> UpdateUser(UpdateUserForm updateUserForm, Guid userId)
-    {
-        throw new NotImplementedException();
+    public async Task<bool?> UpdateUserRole(Guid userId, UserRole role) {
+        var userModel = await _repositoryWrapper.Users.GetById(userId);
+        if (userModel == null || userModel.Deleted)
+            return null;
+
+        userModel.Role = role;
+
+        var updatedUser = await _repositoryWrapper.Users.UpdateUser(userModel);
+        if (updatedUser == null) return false;
+
+        return true;
     }
 }

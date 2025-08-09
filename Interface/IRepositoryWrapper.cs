@@ -1,6 +1,5 @@
 namespace RealEstateBank.Interface;
 
-public interface IRepositoryWrapper
-{
+public interface IRepositoryWrapper {
     IUserRepository Users { get; }
 }

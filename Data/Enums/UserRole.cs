@@ -1,9 +1,8 @@
 namespace RealEstateBank.Data.Enums;
 
-public enum UserRole
-{
+public enum UserRole {
     SuperAdmin,
     Admin,
     Publisher,
-    User,
+    User
 }

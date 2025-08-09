@@ -1,16 +1,16 @@
 services:
-    postgres:
-        image: postgres:16
-        container_name: real_estate_bank_db
-        restart: always
-        environment:
-            POSTGRES_USER: realestateuser
-            POSTGRES_PASSWORD: securepass123
-            POSTGRES_DB: realestatebank
-        ports:
-            - "5432:5432"
-        volumes:
-            - postgres_data:/var/lib/postgresql/data
+  postgres:
+    image: postgres:16
+    container_name: real_estate_bank_db
+    restart: always
+    environment:
+      POSTGRES_USER: realestateuser
+      POSTGRES_PASSWORD: securepass123
+      POSTGRES_DB: realestatebank
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
 volumes:
-    postgres_data:
+  postgres_data:

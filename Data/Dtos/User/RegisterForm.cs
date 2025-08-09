@@ -1,10 +1,10 @@
 using System.ComponentModel.DataAnnotations;
+
 using RealEstateBank.Data.Enums;
 
 namespace RealEstateBank.Data.Dtos.User;
 
-public class RegisterForm
-{
+public class RegisterForm {
     [Required]
     [MinLength(2, ErrorMessage = "FullName must be at least 2 characters")]
     public string? FullName { get; set; }
@@ -21,14 +21,9 @@ public class RegisterForm
     [Compare("Password", ErrorMessage = "Passwords do not match")]
     public string? ConfirmPassword { get; set; }
 
-    [Required]
-    [EmailAddress]
-    public string? Email { get; set; }
+    [Required][EmailAddress] public string? Email { get; set; }
 
-    [Required]
-    public Gender? Gender { get; set; }
+    [Required] public Gender? Gender { get; set; }
 
-    [Required]
-    [DataType(DataType.Date)]
-    public DateOnly? Birthday { get; set; }
+    [Required][DataType(DataType.Date)] public DateOnly? Birthday { get; set; }
 }
