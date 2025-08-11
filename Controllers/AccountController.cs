@@ -13,8 +13,7 @@ namespace RealEstateBank.Controllers;
 public class AccountController(IUserService userService) : BaseController {
     private readonly IUserService _userService = userService;
 
-    [HttpPost]
-    [Route("register")]
+    [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register([FromBody] RegisterForm form) {
         var user = await _userService.Register(form);
 
@@ -24,8 +23,7 @@ public class AccountController(IUserService userService) : BaseController {
         return user;
     }
 
-    [HttpPost]
-    [Route("login")]
+    [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login([FromBody] LoginForm loginForm) {
         var user = await _userService.Login(loginForm);
 
@@ -52,7 +50,6 @@ public class AccountController(IUserService userService) : BaseController {
     [Authorize(Policy = Policies.RequireSuperAdminOnly)]
     [HttpPatch("promote/{userId}/admin")]
     public async Task<IActionResult> PromoteToAdmin(Guid userId) {
-
         var promoted = await _userService.UpdateUserRole(userId, UserRole.Admin);
         if (promoted == null)
             return BadRequest("No such user");
