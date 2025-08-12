@@ -1,5 +1,6 @@
 using RealEstateBank.Extensions;
 using RealEstateBank.Helpers;
+using RealEstateBank.Utils;
 
 using Scalar.AspNetCore;
 
@@ -11,6 +12,7 @@ builder.Services.AddOpenApi("v1", options => {
 });
 
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddExceptionHandler<AppExceptionHandler>();
 
 var app = builder.Build();
 app.UseHttpLogging();
@@ -26,6 +28,7 @@ if (app.Environment.IsDevelopment()) {
     });
 }
 
+app.UseExceptionHandler();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

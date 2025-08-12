@@ -12,7 +12,7 @@ namespace RealEstateBank.Services;
 public interface IUserService {
     Task<UserDto?> Login(LoginForm loginForm);
     Task<UserDto> DeleteUser(Guid id, Guid userId);
-    Task<UserDto?> Register(RegisterForm registerForm);
+    Task<UserDto> Register(RegisterForm registerForm);
     Task<UserDto> UpdateUser(UpdateUserForm updateUserForm, Guid userId);
     Task<UserDto> ChangeMyPassword(ChangePasswordForm form, Guid id);
     Task<PaginatedResult<UserDto>> GetAll(UserFilter filter);
@@ -39,32 +39,7 @@ public class UserService : IUserService {
         _context = context;
     }
 
-    public async Task<UserDto?> Login(LoginForm loginForm) {
-        if (string.IsNullOrWhiteSpace(loginForm.Email))
-            return null;
-
-        var user = await _repositoryWrapper.Users.Get(u => u.Email.ToLower() == loginForm.Email.ToLower()
-        );
-
-        if (user == null || user.Deleted)
-            return null;
-
-        if (!BCrypt.Net.BCrypt.Verify(loginForm.Password, user.PasswordHash))
-            return null;
-
-        var userDto = _mapper.Map<UserDto>(user);
-        userDto.Token = _tokenService.CreateToken(userDto);
-        userDto.RefreshToken = _tokenService.CreateRefreshToken(userDto);
-
-        return userDto;
-    }
-
-    public async Task<UserDto?> Register(RegisterForm registerForm) {
-        var user = await _repositoryWrapper.Users.Get(u =>
-            u.Email == registerForm.Email
-        );
-        if (user != null) return null;
-
+    public async Task<UserDto> Register(RegisterForm registerForm) {
         var newUser = new AppUser {
             Email = registerForm.Email!,
             FullName = registerForm.FullName!,
@@ -75,11 +50,27 @@ public class UserService : IUserService {
             Birthday = registerForm.Birthday!.Value
         };
 
-        var result = await _repositoryWrapper.Users.CreateUser(newUser);
+        var user = await _repositoryWrapper.Users.CreateUser(newUser);
 
-        if (!result.IsSuccess) return null;
+        var userDto = _mapper.Map<UserDto>(user);
+        userDto.Token = _tokenService.CreateToken(userDto);
+        userDto.RefreshToken = _tokenService.CreateRefreshToken(userDto);
+        return userDto;
+    }
 
-        var userDto = _mapper.Map<UserDto>(result.Value);
+    public async Task<UserDto?> Login(LoginForm loginForm) {
+        if (string.IsNullOrWhiteSpace(loginForm.Email))
+            return null;
+
+        var user = await _repositoryWrapper.Users.Get(u => u.Email.ToLower() == loginForm.Email.ToLower());
+
+        if (user == null || user.Deleted)
+            return null;
+
+        if (!BCrypt.Net.BCrypt.Verify(loginForm.Password, user.PasswordHash))
+            return null;
+
+        var userDto = _mapper.Map<UserDto>(user);
         userDto.Token = _tokenService.CreateToken(userDto);
         userDto.RefreshToken = _tokenService.CreateRefreshToken(userDto);
 

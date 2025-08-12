@@ -15,12 +15,7 @@ public class AccountController(IUserService userService) : BaseController {
 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register([FromBody] RegisterForm form) {
-        var user = await _userService.Register(form);
-
-        if (user == null)
-            return StatusCode(500, "");
-
-        return user;
+        return await _userService.Register(form);
     }
 
     [HttpPost("login")]

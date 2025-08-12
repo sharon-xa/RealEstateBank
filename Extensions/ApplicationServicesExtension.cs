@@ -95,14 +95,11 @@ public static class ApplicationServicesExtension {
         });
 
         services.AddHttpLogging(options => {
-            // Log all fields for debugging
             options.LoggingFields = HttpLoggingFields.All;
 
-            options.RequestBodyLogLimit = 4096; // in bytes
-            options.ResponseBodyLogLimit = 4096; // in bytes
+            options.RequestBodyLogLimit = 4096;
+            options.ResponseBodyLogLimit = 4096;
 
-            // Be careful with this, especially in production, as it can be a security risk
-            // You can also add specific headers you want to log
             options.RequestHeaders.Add("Authorization");
         });
 
