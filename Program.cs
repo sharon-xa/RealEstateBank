@@ -1,6 +1,6 @@
 using RealEstateBank.Extensions;
 using RealEstateBank.Helpers;
-using RealEstateBank.Utils;
+using RealEstateBank.Utils.Exceptions;
 
 using Scalar.AspNetCore;
 
@@ -11,11 +11,10 @@ builder.Services.AddOpenApi("v1", options => {
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
 
-builder.Services.AddApplicationServices(builder.Configuration);
 builder.Services.AddExceptionHandler<AppExceptionHandler>();
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
-app.UseHttpLogging();
 
 if (app.Environment.IsDevelopment()) {
     app.MapOpenApi();
@@ -28,7 +27,7 @@ if (app.Environment.IsDevelopment()) {
     });
 }
 
-app.UseExceptionHandler();
+app.UseExceptionHandler(_ => { });
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

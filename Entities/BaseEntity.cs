@@ -7,6 +7,6 @@ public class BaseEntity<TId> {
     public TId Id { get; set; } = default!;
 
     public bool Deleted { get; set; } = false;
-    public DateTime? CreationDate { get; set; } = DateTime.UtcNow;
-    public DateTime? ModifiedDate { get; set; }
+    public DateTime? CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; }
 }

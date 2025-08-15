@@ -77,7 +77,7 @@ public class GenericRepository<T, TId> : IGenericRepository<T, TId> where T : Ba
         if (predicate != null)
             query = query.Where(predicate);
 
-        query = query.OrderByDescending(model => model.CreationDate);
+        query = query.OrderByDescending(model => model.CreatedAt);
 
         return await PaginationHelper.CreateAsync<T>(query, paging.PageNumber, paging.PageSize);
     }
@@ -108,7 +108,7 @@ public class GenericRepository<T, TId> : IGenericRepository<T, TId> where T : Ba
         if (predicate != null)
             query = query.Where(predicate);
 
-        query = query.OrderByDescending(model => model.CreationDate);
+        query = query.OrderByDescending(model => model.CreatedAt);
 
         return await PaginationHelper.CreateAsync<T, TDto>(_mapper, query, paging.PageNumber, paging.PageSize);
     }

@@ -10,11 +10,11 @@ namespace RealEstateBank.Interface;
 
 public interface IUserRepository : IGenericRepository<AppUser, Guid> {
     Task<AppUser> CreateUser(AppUser user);
-    Task<Result<AppUser>> DeleteUser(Guid userId);
-    Task<Result<PaginatedResult<UserDto>>> GetUsers(
+    Task<AppUser> DeleteUser(Guid userId);
+    Task<PaginatedResult<UserDto>> GetUsers(
         Expression<Func<AppUser, bool>> predicate,
         Func<IQueryable<AppUser>, IIncludableQueryable<AppUser, object>> include,
         PagingParams paging
     );
-    Task<Result<AppUser>> UpdateUser(AppUser user);
+    Task<AppUser> UpdateUser(AppUser user);
 }

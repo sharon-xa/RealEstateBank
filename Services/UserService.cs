@@ -1,3 +1,5 @@
+using System.Net;
+
 using AutoMapper;
 
 using RealEstateBank.Data;
@@ -6,11 +8,12 @@ using RealEstateBank.Data.Enums;
 using RealEstateBank.Entities;
 using RealEstateBank.Interface;
 using RealEstateBank.Utils;
+using RealEstateBank.Utils.Exceptions;
 
 namespace RealEstateBank.Services;
 
 public interface IUserService {
-    Task<UserDto?> Login(LoginForm loginForm);
+    Task<UserDto> Login(LoginForm loginForm);
     Task<UserDto> DeleteUser(Guid id, Guid userId);
     Task<UserDto> Register(RegisterForm registerForm);
     Task<UserDto> UpdateUser(UpdateUserForm updateUserForm, Guid userId);
@@ -40,6 +43,7 @@ public class UserService : IUserService {
     }
 
     public async Task<UserDto> Register(RegisterForm registerForm) {
+
         var newUser = new AppUser {
             Email = registerForm.Email!,
             FullName = registerForm.FullName!,
@@ -47,33 +51,34 @@ public class UserService : IUserService {
             PhoneNumber = registerForm.PhoneNumber!,
             Role = UserRole.User,
             Gender = registerForm.Gender!.Value,
-            Birthday = registerForm.Birthday!.Value
+            Birthday = registerForm.Birthday!.Value,
         };
+
+        newUser.RefreshToken = _tokenService.CreateRefreshToken(newUser);
 
         var user = await _repositoryWrapper.Users.CreateUser(newUser);
 
         var userDto = _mapper.Map<UserDto>(user);
-        userDto.Token = _tokenService.CreateToken(userDto);
-        userDto.RefreshToken = _tokenService.CreateRefreshToken(userDto);
+        userDto.Token = _tokenService.CreateToken(user);
         return userDto;
     }
 
-    public async Task<UserDto?> Login(LoginForm loginForm) {
+    public async Task<UserDto> Login(LoginForm loginForm) {
         if (string.IsNullOrWhiteSpace(loginForm.Email))
-            return null;
+            throw new AppException("No email provided", nameof(UserService), nameof(Login), 400);
 
         var user = await _repositoryWrapper.Users.Get(u => u.Email.ToLower() == loginForm.Email.ToLower());
 
         if (user == null || user.Deleted)
-            return null;
+            throw new AppException("Invalid credentials", nameof(UserService), nameof(Login), StatusCodes.Status401Unauthorized);
 
         if (!BCrypt.Net.BCrypt.Verify(loginForm.Password, user.PasswordHash))
-            return null;
+            throw new AppException("Invalid credentials", nameof(UserService), nameof(Login), StatusCodes.Status401Unauthorized);
+
+        user.RefreshToken = _tokenService.CreateRefreshToken(user);
 
         var userDto = _mapper.Map<UserDto>(user);
-        userDto.Token = _tokenService.CreateToken(userDto);
-        userDto.RefreshToken = _tokenService.CreateRefreshToken(userDto);
-
+        userDto.Token = _tokenService.CreateToken(user);
         return userDto;
     }
 

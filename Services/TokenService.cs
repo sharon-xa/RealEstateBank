@@ -4,13 +4,13 @@ using System.Text;
 
 using Microsoft.IdentityModel.Tokens;
 
-using RealEstateBank.Data.Dtos.User;
+using RealEstateBank.Entities;
 
 namespace RealEstateBank.Services;
 
 public interface ITokenService {
-    string CreateToken(UserDto user);
-    string CreateRefreshToken(UserDto user);
+    string CreateToken(AppUser user);
+    string CreateRefreshToken(AppUser user);
 }
 
 public class TokenService : ITokenService {
@@ -58,7 +58,7 @@ public class TokenService : ITokenService {
         _refreshExp = refreshExp;
     }
 
-    public string CreateToken(UserDto user) {
+    public string CreateToken(AppUser user) {
         var claims = GenerateClaims(user);
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);
 
@@ -77,7 +77,7 @@ public class TokenService : ITokenService {
         return tokenHandler.WriteToken(token);
     }
 
-    public string CreateRefreshToken(UserDto user) {
+    public string CreateRefreshToken(AppUser user) {
         var claims = GenerateClaims(user);
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512);
 
@@ -96,7 +96,7 @@ public class TokenService : ITokenService {
         return tokenHandler.WriteToken(token);
     }
 
-    private static List<Claim> GenerateClaims(UserDto user) {
+    private static List<Claim> GenerateClaims(AppUser user) {
         return [
             new Claim("sub", user.Id.ToString(), ClaimValueTypes.String),
             new Claim(JwtRegisteredClaimNames.Name, user.FullName, ClaimValueTypes.String),

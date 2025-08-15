@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 using RealEstateBank.Data.Enums;
 
@@ -23,7 +24,9 @@ public class RegisterForm {
 
     [Required][EmailAddress] public string? Email { get; set; }
 
-    [Required] public Gender? Gender { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    [Required]
+    public Gender? Gender { get; set; }
 
     [Required][DataType(DataType.Date)] public DateOnly? Birthday { get; set; }
 }

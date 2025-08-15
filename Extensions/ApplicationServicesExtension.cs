@@ -1,7 +1,6 @@
 using System.Text;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -92,15 +91,6 @@ public static class ApplicationServicesExtension {
             options.AddPolicy(Policies.RequirePublisherOrAdmin, policy =>
                 policy.RequireRole(nameof(UserRole.Publisher), nameof(UserRole.Admin))
             );
-        });
-
-        services.AddHttpLogging(options => {
-            options.LoggingFields = HttpLoggingFields.All;
-
-            options.RequestBodyLogLimit = 4096;
-            options.ResponseBodyLogLimit = 4096;
-
-            options.RequestHeaders.Add("Authorization");
         });
 
         var serviceProvider = services.BuildServiceProvider();
