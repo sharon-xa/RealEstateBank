@@ -42,7 +42,9 @@ public static class ApplicationServicesExtension {
                 ValidAudience = config["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(config["Jwt:Key"]!)
-                )
+                ),
+                RoleClaimType = "role",
+                NameClaimType = "name"
             };
             options.Events = new JwtBearerEvents {
                 OnAuthenticationFailed = context => {

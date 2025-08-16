@@ -20,12 +20,7 @@ public class AccountController(IUserService userService) : BaseController {
 
     [HttpPost("login")]
     public async Task<ActionResult<UserDto>> Login([FromBody] LoginForm loginForm) {
-        var user = await _userService.Login(loginForm);
-
-        if (user == null)
-            return BadRequest("Wrong credentials");
-
-        return user;
+        return await _userService.Login(loginForm);
     }
 
     [Authorize]

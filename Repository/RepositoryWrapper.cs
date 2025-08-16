@@ -8,13 +8,13 @@ namespace RealEstateBank.Repository;
 public class RepositoryWrapper : IRepositoryWrapper {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
-
+    public IUserRepository Users { get; }
+    public IBankRepository Bank { get; }
 
     public RepositoryWrapper(DataContext context, IMapper mapper) {
         _context = context;
         _mapper = mapper;
         Users ??= new UserRepository(_context, _mapper);
+        Bank ??= new BankRepository(_context, _mapper);
     }
-
-    public IUserRepository Users { get; }
 }

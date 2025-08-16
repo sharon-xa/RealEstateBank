@@ -19,7 +19,7 @@ public interface IUserService {
     Task<UserDto> UpdateUser(UpdateUserForm updateUserForm, Guid userId);
     Task<UserDto> ChangeMyPassword(ChangePasswordForm form, Guid id);
     Task<PaginatedResult<UserDto>> GetAll(UserFilter filter);
-    Task<UserDto> GetUserById(Guid id);
+    Task<UserDto?> GetUserById(Guid id);
     Task<string> GetAccessToken(Guid? userId, DateTime? ExpiryDate);
     Task<bool?> UpdateUserRole(Guid userId, UserRole role);
 }
@@ -102,8 +102,10 @@ public class UserService : IUserService {
         throw new NotImplementedException();
     }
 
-    public async Task<UserDto> GetUserById(Guid id) {
+    public async Task<UserDto?> GetUserById(Guid id) {
         var userModel = await _repositoryWrapper.Users.GetById(id);
+        if (userModel == null)
+            return null;
         return _mapper.Map<UserDto>(userModel);
     }
 

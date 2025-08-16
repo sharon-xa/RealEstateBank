@@ -1,0 +1,4 @@
+# super admin credentials
+
+SuperAdmin@SuperAdmin.com
+password

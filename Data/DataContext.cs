@@ -52,12 +52,15 @@ public class DataContext : DbContext {
                 FullName = "SuperAdmin",
                 Role = UserRole.SuperAdmin,
                 Email = "SuperAdmin@SuperAdmin.com",
-                PasswordHash = "$2a$11$or2Rg8NDeqq10APfQng1HO9zmM.LpqLc92QAR79ssJcgulD.HJgsu",
+                PasswordHash = "$2a$11$KsnJwz4qaejE6xIrGd.RLOfnA6TYRQrYKYACRb0/nQA8iBoi1PT7y",
                 PhoneNumber = "07816562345",
                 CreatedAt = new DateTime(2025, 8, 7, 0, 0, 0, DateTimeKind.Utc)
             }
         ];
 
         modelBuilder.Entity<AppUser>().HasData(users);
+
+        Bank bank = new Bank { Id = 1 };
+        modelBuilder.Entity<Bank>().HasData(bank);
     }
 }
