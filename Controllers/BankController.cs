@@ -13,7 +13,7 @@ public class BankController(IBankService bankService) : BaseController {
     private readonly IBankService _bankService = bankService;
 
     [Authorize(Policy = Policies.RequirePublisherOrAbove)]
-    [HttpGet("")]
+    [HttpGet]
     public async Task<ActionResult<BankDto>> GetBank() {
         return await _bankService.GetBank();
     }

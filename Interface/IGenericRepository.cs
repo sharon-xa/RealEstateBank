@@ -26,6 +26,8 @@ public interface IGenericRepository<T, TId> {
         PagingParams paging
     );
 
+    Task<List<T>> GetAll();
+
     Task<PaginatedResult<TDto>> GetAll<TDto>(
         Expression<Func<T, bool>> predicate,
         Func<IQueryable<T>, IIncludableQueryable<T, object>> include,
@@ -43,6 +45,8 @@ public interface IGenericRepository<T, TId> {
         Func<IQueryable<T>, IIncludableQueryable<T, object>> include,
         PagingParams paging
     );
+
+    Task<List<TDto>> GetAll<TDto>();
 
     Task<T> Add(T entity);
     Task<T?> Delete(TId id);

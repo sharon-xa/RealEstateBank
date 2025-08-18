@@ -10,11 +10,15 @@ public class RepositoryWrapper : IRepositoryWrapper {
     private readonly IMapper _mapper;
     public IUserRepository Users { get; }
     public IBankRepository Bank { get; }
+    public IAdvertisementRepository Advertisements { get; }
+    public IServiceRepository Services { get; }
 
     public RepositoryWrapper(DataContext context, IMapper mapper) {
         _context = context;
         _mapper = mapper;
         Users ??= new UserRepository(_context, _mapper);
         Bank ??= new BankRepository(_context, _mapper);
+        Advertisements ??= new AdvertisementRepository(_context, _mapper);
+        Services ??= new ServiceRepository(_context, _mapper);
     }
 }

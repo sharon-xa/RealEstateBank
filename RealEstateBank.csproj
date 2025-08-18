@@ -21,6 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Folder Include="Data/Dtos/Advertisement/Service/" />
         <Folder Include="Data/Dtos/File/" />
     </ItemGroup>
 

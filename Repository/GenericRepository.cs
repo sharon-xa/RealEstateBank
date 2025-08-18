@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
@@ -31,6 +32,7 @@ public class GenericRepository<T, TId> : IGenericRepository<T, TId> where T : Ba
         var result = await GetById(id);
         if (result == null || result.Deleted)
             return null;
+
         _ctx.Set<T>().Remove(result);
         await _ctx.SaveChangesAsync();
         return result;
@@ -95,6 +97,12 @@ public class GenericRepository<T, TId> : IGenericRepository<T, TId> where T : Ba
         return GetAll(null, include, paging);
     }
 
+    public async Task<List<T>> GetAll() {
+        var query = _ctx.Set<T>().AsQueryable();
+        query = query.OrderByDescending(model => model.CreatedAt);
+        return await query.ToListAsync();
+    }
+
     public async Task<PaginatedResult<TDto>> GetAll<TDto>(
         Expression<Func<T, bool>>? predicate,
         Func<IQueryable<T>, IIncludableQueryable<T, object>>? include,
@@ -129,6 +137,13 @@ public class GenericRepository<T, TId> : IGenericRepository<T, TId> where T : Ba
         PagingParams paging
     ) {
         return GetAll<TDto>(null, include, paging);
+    }
+
+    public async Task<List<TDto>> GetAll<TDto>() {
+        var query = _ctx.Set<T>().AsQueryable();
+        query = query.OrderByDescending(model => model.CreatedAt);
+        var dtoList = await query.ProjectTo<TDto>(_mapper.ConfigurationProvider).ToListAsync();
+        return dtoList;
     }
 
     public async Task<T?> GetById(TId id) {
