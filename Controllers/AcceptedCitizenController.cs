@@ -17,8 +17,8 @@ public class AcceptedCitizenController(IAcceptedCitizenService acceptedCitizen) 
         return await _acceptedCitizen.GetAll(pagingParams);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> AddAcceptedCitizens(IFormFile file) {
+    [HttpPost("document")]
+    public IActionResult AddAcceptedCitizens(IFormFile file) {
         const int MaxFileSize5MB = 5 * 1024 * 1024;
 
         var err = SafeFileUpload.CheckFile(file, ["xlsx"], MaxFileSize5MB);
