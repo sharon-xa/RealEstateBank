@@ -52,7 +52,7 @@ public static class DbErrors {
             case var c when c == PostgresErrorCodes.CheckViolation:
                 return $"Invalid value for {column}.";
             case var c when c == PostgresErrorCodes.ExclusionViolation:
-                return $"Conflicts with an existing {table}.";
+                return $"Conflicts with an existing {Singularize(table)}.";
             case var c when c == PostgresErrorCodes.DeadlockDetected:
                 return "A database deadlock occurred. Please retry.";
             case var c when c == PostgresErrorCodes.SerializationFailure:

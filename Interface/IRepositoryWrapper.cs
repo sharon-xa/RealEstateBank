@@ -5,4 +5,6 @@ public interface IRepositoryWrapper {
     IBankRepository Bank { get; }
     IAdvertisementRepository Advertisements { get; }
     IServiceRepository Services { get; }
+    IAcceptedCitizenRepository AcceptedCitizens { get; }
+    IBranchRepository Branches { get; }
 }

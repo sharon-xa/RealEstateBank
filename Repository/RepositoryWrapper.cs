@@ -12,6 +12,8 @@ public class RepositoryWrapper : IRepositoryWrapper {
     public IBankRepository Bank { get; }
     public IAdvertisementRepository Advertisements { get; }
     public IServiceRepository Services { get; }
+    public IAcceptedCitizenRepository AcceptedCitizens { get; }
+    public IBranchRepository Branches { get; }
 
     public RepositoryWrapper(DataContext context, IMapper mapper) {
         _context = context;
@@ -20,5 +22,7 @@ public class RepositoryWrapper : IRepositoryWrapper {
         Bank ??= new BankRepository(_context, _mapper);
         Advertisements ??= new AdvertisementRepository(_context, _mapper);
         Services ??= new ServiceRepository(_context, _mapper);
+        AcceptedCitizens ??= new AcceptedCitizenRepository(_context, _mapper);
+        Branches ??= new BranchRepository(_context, _mapper);
     }
 }

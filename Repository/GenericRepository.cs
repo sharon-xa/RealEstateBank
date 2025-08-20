@@ -30,8 +30,7 @@ public class GenericRepository<T, TId> : IGenericRepository<T, TId> where T : Ba
 
     public async Task<T?> Delete(TId id) {
         var result = await GetById(id);
-        if (result == null || result.Deleted)
-            return null;
+        if (result == null || result.Deleted) return null;
 
         _ctx.Set<T>().Remove(result);
         await _ctx.SaveChangesAsync();

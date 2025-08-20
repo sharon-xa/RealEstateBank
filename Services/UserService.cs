@@ -65,7 +65,7 @@ public class UserService : IUserService {
 
     public async Task<UserDto> Login(LoginForm loginForm) {
         if (string.IsNullOrWhiteSpace(loginForm.Email))
-            throw new AppException("No email provided", nameof(UserService), nameof(Login), 400);
+            throw new AppException("No email provided", nameof(UserService), nameof(Login), StatusCodes.Status400BadRequest);
 
         var user = await _repositoryWrapper.Users.Get(u => u.Email.ToLower() == loginForm.Email.ToLower());
 
