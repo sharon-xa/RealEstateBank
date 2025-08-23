@@ -2,6 +2,9 @@ namespace RealEstateBank.Helpers;
 
 public static class SafeFileUpload {
     public static string? CheckFile(IFormFile file, HashSet<string> allowedFileTypes, int maxSizeInBytes) {
+        if (file == null || file.Length == 0)
+            return "no file uploaded";
+
         var fileType = Path.GetExtension(file.FileName);
         if (fileType == null)
             return "File type isn't allowed";

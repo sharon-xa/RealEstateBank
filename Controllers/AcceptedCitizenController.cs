@@ -10,21 +10,21 @@ namespace RealEstateBank.Controllers;
 [Route("api/accepted-citizens")]
 [ApiController]
 public class AcceptedCitizenController(IAcceptedCitizenService acceptedCitizen) : ControllerBase {
-    private readonly IAcceptedCitizenService _acceptedCitizen = acceptedCitizen;
+    private readonly IAcceptedCitizenService _acceptedCitizenService = acceptedCitizen;
 
     [HttpGet]
     public async Task<ActionResult<PaginatedResult<AcceptedCitizenDto>>> GetAll([FromQuery] PagingParams pagingParams) {
-        return await _acceptedCitizen.GetAll(pagingParams);
+        return await _acceptedCitizenService.GetAll(pagingParams);
     }
 
     [HttpPost("document")]
-    public IActionResult AddAcceptedCitizens(IFormFile file) {
-        const int MaxFileSize5MB = 5 * 1024 * 1024;
+    public async Task<IActionResult> AddAcceptedCitizens(IFormFile file) {
+        const int MaxFileSize = 5 * 1024 * 1024;
 
-        var err = SafeFileUpload.CheckFile(file, ["xlsx"], MaxFileSize5MB);
+        var err = SafeFileUpload.CheckFile(file, ["xlsx"], MaxFileSize);
         if (err != null)
             return BadRequest(err);
 
-        return Ok();
+        return Ok(await _acceptedCitizenService.ImportAcceptedCitizens(file));
     }
 }
